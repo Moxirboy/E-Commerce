@@ -1,5 +1,4 @@
 <?php
-
 namespace frontend\models;
 
 use Yii;
@@ -11,8 +10,8 @@ use common\models\User;
  */
 class SignupForm extends Model
 {
-    public $first_name;
-    public $last_name;
+    public $firstname;
+    public $lastname;
     public $username;
     public $email;
     public $password;
@@ -24,12 +23,15 @@ class SignupForm extends Model
     public function rules()
     {
         return [
+            ['firstname', 'required'],
+            ['firstname', 'string', 'max' => '255'],
+            ['lastname', 'required'],
+            ['lastname', 'string', 'max' => '255'],
             ['username', 'trim'],
             ['username', 'required'],
             ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
             ['username', 'string', 'min' => 2, 'max' => 255],
-            ['first_name', 'required'],
-            ['last_name', 'required'],
+
             ['email', 'trim'],
             ['email', 'required'],
             ['email', 'email'],
@@ -53,16 +55,15 @@ class SignupForm extends Model
         }
         
         $user = new User();
-        $user->first_name=$this->first_name;
-        $user->last_name=$this->last_name;
-
+        $user->firstname = $this->firstname;
+        $user->lastname = $this->lastname;
         $user->username = $this->username;
         $user->email = $this->email;
         $user->setPassword($this->password);
         $user->generateAuthKey();
         $user->generateEmailVerificationToken();
-
         return $user->save() && $this->sendEmail($user);
+
     }
 
     /**
